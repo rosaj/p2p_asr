@@ -133,4 +133,5 @@ data/sent140/sent140/data/*
 *.h5
 *.flac
 *.txt
+*.tsv
 
