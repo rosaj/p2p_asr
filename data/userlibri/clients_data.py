@@ -86,15 +86,6 @@ def post_process_dataset(tf_dataset, data_pars):
     if next(iter(tf_dataset), None) is None:
         return tf_dataset
     x, y = next(iter(tf_dataset))
-    if data_pars.get('model', '').lower() == 'las':
-        def make_example(audio: tf.Tensor, tokens: Tuple[tf.Tensor, tf.Tensor]) -> Tuple[Tuple[tf.Tensor, tf.Tensor], tf.Tensor]:
-            lbl_ind = tf.where(tf.not_equal(tokens, tf.constant(0, dtype=tf.int32)))
-            return (audio, tf.squeeze(tf.gather(tokens, lbl_ind[:-1]))), tf.squeeze(tf.gather(tokens, lbl_ind[1:]))
-        tf_dataset = tf_dataset.map(make_example, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-        padded_shape = ((x.shape, y.shape[0]-1), [y.shape[0]-1])
-    else:
-        # DS2
-        padded_shape = (x.shape, y.shape)
+    padded_shape = (x.shape, y.shape)
     tf_dataset = tf_dataset.shuffle(data_pars['batch_size']).padded_batch(data_pars['batch_size'], padded_shape)
     return tf_dataset
