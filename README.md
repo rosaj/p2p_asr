@@ -57,4 +57,10 @@ Please inspect how existing `clients_data.py` are prepared and prepare your data
 When you prepared your custom `clients_data.py` for your custom dataset, simply change the import in the notebook and the model/agents will use data from the custom dataset.  
 
  
-
+### Training parameters
+The default training parameters such as `batch_size` and `learning_rate` are optimally set to optimize the learning process in both centralized and peer-to-peer environment.
+`batch_size` of `8` was set to both reduce GPU memory usage and improve learning. `learning_rate` was set to `1e-4` for experiments.
+Please note that the training using the `LJ Speech` dataset in peer-to-peer environment will last 7 days to complete 500 epochs on a **NVIDIA GeForce RTX 2080 Ti** with **10.7GB** of GPU RAM memory.
+Training using the `UserLibri` dataset will last 3-4 days to complete 500 epochs of local training per agent.
+Training a single model in centralized model will take half as much and the model will converge in about 50 epochs.
+  
