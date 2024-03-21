@@ -3,7 +3,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from models.abstract_model import *
 from models.abstract_model import eval_model_metrics as base_eval_model_metrics
-from jiwer import wer
+from jiwer import wer, cer
 
 
 def create_tokenizers():
@@ -100,7 +100,9 @@ def create_model(rnn_units=512, rnn_layers=7, input_dim=193,
                   loss=CTCLoss,
                   metrics=[])
 
-    if default_weights:
+    if isinstance(default_weights, str):
+        model.load_weights(default_weights)
+    elif default_weights:
         assign_default_weights(model, 'DeepSpeech_2')
 
     return model
@@ -112,7 +114,7 @@ def eval_model_metrics(m, dataset):
     if next(iter(dataset), None) is None:
         return results
 
-    results['ctc_loss'], results["wer"] = calc_metrics(m, dataset)
+    results['ctc_loss'], results["wer"], results["cer"] = calc_metrics(m, dataset)
     return results
 
 
@@ -128,7 +130,7 @@ def decode_batch_predictions(pred):
     return output_text
 
 
-def calc_metrics(m, dataset):
+def calc_metrics(m, dataset, verbose=False):
     loss = []
     predictions = []
     targets = []
@@ -144,13 +146,14 @@ def calc_metrics(m, dataset):
             )
             targets.append(label)
     wer_score = wer(targets, predictions)
-    """
-    print("-" * 100)
-    print(f"Word Error Rate: {wer_score:.4f}")
-    print("-" * 100)
-    for i in np.random.randint(0, len(predictions), 2):
-        print(f"Target    : {targets[i]}")
-        print(f"Prediction: {predictions[i]}")
+    cer_score = cer(targets, predictions)
+    if verbose:
         print("-" * 100)
-    """
-    return np.mean(loss), wer_score
+        print(f"Word Error Rate: {wer_score:.4f}")
+        print(f"Character Error Rate: {cer_score:.4f}")
+        print("-" * 100)
+        for i in np.random.randint(0, len(predictions), 2):
+            print(f"Target    : {targets[i]}")
+            print(f"Prediction: {predictions[i]}")
+            print("-" * 100)
+    return np.mean(loss), wer_score, cer_score
