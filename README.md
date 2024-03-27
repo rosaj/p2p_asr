@@ -64,3 +64,9 @@ Please note that the training using the `LJ Speech` dataset in peer-to-peer envi
 Training using the `UserLibri` dataset will last 3-4 days to complete 500 epochs of local training per agent.
 Training a single model in centralized model will take half as much and the model will converge in about 50 epochs.
   
+
+
+### Results visualization
+Use `plot.visualize` to visualize the results of the simulations. 
+All result files of the experiments can be found on a shared [google drive](https://drive.google.com/drive/folders/1wu21lUgfCDK8_h8YoJAevGZjn14kyWLV?usp=sharing) within the `seq2seq.zip`. 
+To visualise existing results, use [`plot/seq2seq.py`](plot/seq2seq.py) and place (unpack) the downloaded data (seq2seq.zip) in `log/` directory.
